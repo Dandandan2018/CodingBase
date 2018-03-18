@@ -1,0 +1,52 @@
+//典型dfs(注意区分回溯法)
+#include <map>
+#include <set>
+#include <queue>
+#include <vector>
+#include <string>
+#include <stdio.h>
+#include <string.h>
+#include <iostream>
+#include <algorithm>
+#define MAXN 110	//580k
+//#define MAXN 1010	//1060k
+#define INf 0x3f3f3f3f
+int n, m;
+char pic[MAXN][MAXN];
+using namespace std;
+void dfs(int x, int y);
+int main() {	
+	while (scanf("%d%d", &n, &m) != EOF) {
+		getchar();
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < m; j++) {
+				cin >> pic[i][j];
+			}
+		}
+		int cnt = 0;
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < m; j++) {
+				if (pic[i][j] == 'W') {
+					dfs(i, j);
+					cnt++;
+				}
+			}
+		}
+		cout << cnt << '\n';
+		memset(pic, 0, sizeof(pic));
+	}
+	return 0;
+}
+
+void dfs(int x, int y) {
+	pic[x][y] = '.';
+	for (int dx = -1; dx <= 1; dx++) {
+		for (int dy = -1; dy <= 1; dy++) {
+			int nx = x + dx;
+			int ny = y + dy;
+			if (nx >= 0 && nx < n && ny >= 0 && ny < m && pic[nx][ny] != '.') {
+				dfs(nx, ny);
+			}
+		}
+	}
+}
