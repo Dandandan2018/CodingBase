@@ -21,6 +21,7 @@ int main() {
 		}
 		if (dfs(0, 0)) { printf("Yes\n"); }
 		else { printf("No\n"); }
+		memset(a, 0, sizeof(a));
 	}
 	return 0;
 }
