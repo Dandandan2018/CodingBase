@@ -1,0 +1,34 @@
+//dfs基础, 01背包
+#include <map>
+#include <set>
+#include <queue>
+#include <vector>
+#include <string>
+#include <stdio.h>
+#include <string.h>
+#include <iostream>
+#include <algorithm>
+#define MAXN 10010
+#define INf 0x3f3f3f3f
+int n, k;
+int a[MAXN];
+using namespace std;
+bool dfs(int i, int sum);
+int main() {	
+	while (scanf("%d%d", &n, &k) != EOF) {
+		for (int i = 0; i < n; i++) {
+			scanf("%d", &a[i]);
+		}
+		if (dfs(0, 0)) { printf("Yes\n"); }
+		else { printf("No\n"); }
+	}
+	return 0;
+}
+
+bool dfs(int i, int sum) {
+	if (i == n) { return sum == k; }	//检查遍历是否到底, 并返回题目判断
+	//若末项返回真, 则返回真值
+	if (dfs(i + 1, sum)) { return true; }
+	if (dfs(i + 1, sum + a[i])) { return true; }
+	return false;    //防止所有末项均不合题意
+}
