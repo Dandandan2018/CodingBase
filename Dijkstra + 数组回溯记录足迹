@@ -1,0 +1,88 @@
+#include <string>
+#include <stdio.h>
+#include <string.h>
+#include <iostream>
+#include <algorithm>
+#define MAXN 510
+#define INF 0x3f3f3f3f
+using namespace std;
+int n, m, s, d;
+int pic[MAXN][MAXN];
+int num[MAXN], sum[MAXN], pathnum[MAXN];
+int pre[MAXN];
+void Dijkstra(int u);
+void Print(int i);
+int main() {
+  while (scanf("%d%d%d%d", &n, &m, &s, &d) != EOF) {
+    memset(pic, 0x3f, sizeof(pic));
+    memset(num, 0, sizeof(num));
+    memset(sum, 0, sizeof(sum));
+    for (int i = 0; i < n; i++) {
+      pre[i] = -1;
+    }
+    for (int i = 0; i < n; i++) {
+      pic[i][i] = 0;
+    }
+    for (int i = 0; i < n; i++) {
+      scanf("%d", &num[i]);
+    }
+    for (int i = 0; i < m; i++) {
+      int a, b, c;
+      scanf("%d%d%d", &a, &b, &c);
+      pic[a][b] = c;
+      pic[b][a] = c;
+    }
+    Dijkstra(s);
+    printf("%d %d\n", pathnum[d], sum[d]);
+    Print(d);
+  }
+  return 0;
+}
+
+void Dijkstra(int u) {
+  bool vis[MAXN];
+  int dis[MAXN];
+  memset(dis, 0x3f, sizeof(dis));
+  memset(vis, 0, sizeof(vis));
+
+  dis[u] = 0;
+  pathnum[u] = 1;
+  sum[u] = num[u];
+
+  int minn, idx;
+  for (int i = 0; i < n; i++) {
+    minn = INF;
+    for (int j = 0; j < n; j++) {
+      if (minn > dis[j] && !vis[j]) {
+        minn = dis[j];
+        idx = j;
+      }
+    }
+    vis[idx] = 1;
+    for (int j = 0; j < n; j++) {
+      if (!vis[j] && minn + pic[idx][j] < dis[j]) {
+        dis[j] = minn + pic[idx][j];
+        pathnum[j] = pathnum[idx];
+        sum[j] = sum[idx] + num[j];
+        pre[j] = idx;
+      }
+      else if (!vis[j] && minn + pic[idx][j] == dis[j]) {
+        pathnum[j] += pathnum[idx];
+        if (sum[j] < sum[idx] + num[j]) {
+          sum[j] = sum[idx] + num[j];
+          pre[j] = idx;
+        }
+      }
+    }
+  }
+}
+
+void Print(int i) {
+  if (pre[i] == s) {
+    printf("%d", s);
+  }
+  else {
+    Print(pre[i]);
+  }
+  printf(" %d", i);
+}
