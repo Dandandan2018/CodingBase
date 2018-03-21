@@ -1,0 +1,43 @@
+#include <queue>
+#include <string>
+#include <stdio.h>
+#include <string.h>
+#include <iostream>
+#include <algorithm>
+#define MAXN 1050
+const int INF = 0x3f3f3f3f;
+using namespace std;
+typedef pair <int, int> P;
+int n, m, sx, sy, dx, dy;
+int dirx[4] = { 1, 0, -1, 0 };
+int diry[4] = { 0, 1, 0, -1 };
+char pic[MAXN][MAXN];
+int sav[MAXN][MAXN];
+int bfs();
+int main() {
+	while (scanf("%d%d%d%d", &n, &m) != EOF) {
+		int res = bfs();
+		printf("%d\n", res);
+	}
+	return 0;
+}
+
+int bfs() {
+	queue <P> que;
+	memset(sav, 0x3f, sizeof(sav));
+	que.push(P(sx, sy));
+	sav[sx][sy] = 0;
+	while (!que.empty()) {
+		P p = que.front(); que.pop();
+		if (p.first == dx && p.second == dy) { break; }
+		for (int i = 0; i < 4; i++) {
+			int nx = p.first + dirx[i];
+			int ny = p.second + diry[i];
+			if (0 <= nx && nx < n && ny >= 0 && ny < m && pic[nx][ny] != '#' && sav[nx][ny] == INF) {
+				que.push(P(nx, ny));
+				sav[nx][ny] = d[p.first][p.second] + 1;
+			}
+		}
+	}
+	return sav[dx][dy];
+}
