@@ -1,0 +1,36 @@
+#include <queue>
+#include <vector>
+#include <string>
+#include <stdio.h>
+#include <string.h>
+#include <iostream>
+#include <algorithm>
+#define MAXN 1010
+using namespace std;
+int n, m;
+int w[MAXN], v[MAXN];
+int dp[MAXN][MAXN];
+void Solve(int cnt, int v0);
+int main() {
+	while (scanf("%d%d", &n, &m) != EOF) {
+		for (int i = 0; i < n; i++) {
+			scanf("%d%d", &w[i], &v[i]);
+		}
+		Solve(0, m);
+	}
+	return 0;
+}
+
+void Solve(int i, int j) {
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j <= m; j++) {
+			if (j < w[i]) {
+				dp[i + 1][j] = dp[i][j];
+			}
+			else {
+				dp[i + 1][j] = max(dp[i][j], dp[i][j - w[i]] + v[i]);
+			}
+		}
+	}
+	printf("%d\n", dp[n][m]);
+}
