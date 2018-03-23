@@ -13,7 +13,6 @@ int dp[MAXN][MAXN];
 void Solve(int cnt, int v0);
 int main() {
 	while (scanf("%d%d", &n, &m) != EOF) {
-		memset(dp, -1, sizeof(dp));
 		for (int i = 0; i < n; i++) {
 			scanf("%d%d", &w[i], &v[i]);
 		}
@@ -23,7 +22,7 @@ int main() {
 }
 
 void Solve(int i, int j) {
-	for (int i = n - 1; i >= 0; i++) {
+	for (int i = n - 1; i >= 0; i--) {
 		for (int j = 0; j <= m; j++) {
 			if (j < w[i]) {
 				dp[i][j] = dp[i + 1][j];
@@ -35,4 +34,3 @@ void Solve(int i, int j) {
 	}
 	printf("%d\n", dp[0][m]);
 }
-
