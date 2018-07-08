@@ -1,0 +1,74 @@
+//最短路优先队列板子题
+#include <vector>
+#include <queue>
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#define MAXN 1000005
+const int INF = 0x3f3f3f3f;
+using namespace std;
+int n, d, c;
+struct node
+{
+	int k, dis;
+	node(int a = 0, int b = 0) {
+		k = a; dis = b;
+	}
+	bool operator < (const node &b) const {
+		return dis > b.dis;
+	}
+};
+int dis[MAXN];
+vector <int> adj[MAXN], len[MAXN];
+void dijkstra(int start);
+int main() {
+	int num;
+	while (scanf("%d", &num) != EOF) {
+		while (num--) {
+			scanf("%d%d%d", &n, &d, &c);
+			for (int i = 0; i < n;i++) {
+				adj[i].clear();
+				len[i].clear();
+			}
+			int a, b, s;
+			for (int i = 0; i < d; i++) {
+				scanf("%d%d%d", &a, &b, &s);
+				adj[b - 1].push_back(a - 1);
+				len[b - 1].push_back(s);
+			}
+			dijkstra(c - 1);
+			int cnt = 0, res = -1;
+			for (int i = 0;i < n;i++) {
+				if (dis[i] != INF) {
+					cnt++;
+					res = max(res, dis[i]);
+				}
+			}
+			printf("%d %d\n", cnt, res);
+		}
+	}
+	return 0;
+}
+
+void dijkstra(int start) {
+	priority_queue <node> pq;
+	for (int i = 0; i < n; i++) {
+		dis[i] = INF;
+	}
+	dis[start] = 0;
+	pq.push(node(start, 0));
+	while (!pq.empty()) {
+		node now = pq.top();
+		pq.pop();
+		if (dis[now.k] < now.dis) {	//若已更新过则不再更新(vis[])
+			continue;
+		}
+		for (int i = adj[now.k].size() - 1; i >= 0; i--) {
+			if (dis[adj[now.k][i]] > now.dis + len[now.k][i]) {
+				int j = adj[now.k][i];
+				dis[j] = now.dis + len[now.k][i];
+				pq.push(node(j, dis[j]));
+			}
+		}
+	}
+}
