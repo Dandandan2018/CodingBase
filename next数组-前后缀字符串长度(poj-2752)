@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+#define MAXN 1000010
+char s[MAXN], t[MAXN];
+int n, m, minn;
+int nex[MAXN];
+void get_next();
+void print(int idx);
+int main() {
+	while (scanf("%s", t) != EOF && strcmp (t, ".") != 0) {
+		m = strlen(t);
+		get_next();
+		minn = m - nex[m];
+		if (m % minn == 0 && m == minn) {
+		} else {
+			print(nex[m]);
+		}
+		printf("%d\n", m);
+	}
+	return 0;	
+} 
+
+void get_next() {
+	nex[0] = -1;
+	int j = 0,k = -1;
+	int tlen = m;
+	while (j < m) {
+		if (k == -1 || t[j] == t[k]) {
+			nex[++j] = ++k;
+		} else {
+			k = nex[k];
+		}
+	}
+}
+
+void print(int idx) {
+	if (nex[idx] == 0 || nex[idx] == -1) {
+		printf("%d ", idx);
+		return;
+	} else {
+		print(nex[idx]);
+		printf("%d ", idx);
+	}
+}
