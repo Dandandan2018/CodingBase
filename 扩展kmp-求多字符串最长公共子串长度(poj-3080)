@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <string>
+#include <string.h>
+#include <algorithm>
+#include <iostream>
+#define MAXN 1005
+#define INF 0x3f3f3f3f
+using namespace std;
+//int n, m;
+char s[MAXN], t[MAXN], sav[MAXN][MAXN];
+string ans[MAXN];
+int res[MAXN];
+int nex[MAXN];
+int extend[MAXN];
+void get_next(char t[], int m);
+void get_extend(char s[], char t[], int n, int m);
+int main() {
+	int runs;
+	while (scanf("%d", &runs) != EOF) {
+		for (int run = 0;run < runs;run++) {
+			int num;
+			scanf("%d", &num);
+			scanf("%s", sav[0]);
+			memset(res, 0x3f, sizeof(res));
+			for (int i = 1; i < num; i++) {
+				scanf("%s", sav[i]);
+			}
+			int len = strlen(sav[0]);
+			int minn = INF, idx;
+			int maxx = 0;	// 记录最长公共子串长度  
+			for (int i = 0; i < len; i++) {
+				get_next(sav[0] + i, len - i);
+				for (int j = 1; j < num; j++) {
+					int maxn = 0;
+					get_extend(sav[j], sav[0] + i, strlen(sav[j]), len - i);
+					for (int k = 0; k < strlen(sav[j]); k++) {
+						maxn = max(maxn, extend[k]);
+					}
+					res[i] = min(res[i], maxn);
+				}
+				if (maxx <= res[i]) {
+					maxx = res[i];
+				}
+			}
+			if (maxx < 3) {
+				printf("no significant commonalities\n");
+			} else{
+				int cnt = 0;
+				for (int i = 0;i < len;i++) {
+					if (maxx == res[i]) {
+						ans[cnt++] = string(sav[0] + i, maxx);
+					}
+				}
+				sort(ans, ans + cnt);
+				cout << ans[0] << endl;
+			}
+		}
+	}
+	return 0;
+}
+
+void get_next(char t[], int m) {
+	memset(nex, 0, sizeof(nex));
+	nex[0] = m;
+	int j = 0;
+	while (j < m - 1 && t[j] == t[j + 1]) {
+		j++;
+	}
+	nex[1] = j;
+	int a = 1;
+	for (int k = 2; k < m; k++) {
+		int p = a + nex[a] - 1;
+		int L = nex[k - a];
+		if ((k - 1) + L >= p) {
+			int j = max(0, p - k + 1);
+			while (k + j < m && t[k + j] == t[j]) {
+				++j;
+			}
+			nex[k] = j;
+			a = k;
+		}
+		else {
+			nex[k] = L;
+		}
+	}
+}
+
+void get_extend(char s[], char t[], int n, int m) {
+	memset(extend, 0, sizeof(extend));
+	int i = 0;
+	while (s[i] == t[i] && i < n && i < m) {
+		++i;
+	}
+	extend[0] = i;
+	int a = 0;
+	for (int k = 1; k < n; k++) {
+		int p = a + extend[a] - 1;
+		int L = nex[k - a];
+		if ((k - 1) + L >= p) {
+			int j = (p - k + 1) > 0 ? (p - k + 1) : 0;
+			while (k + j < n && j < m && s[k + j] == t[j]) {
+				j++;
+			}
+			extend[k] = j;
+			a = k;
+		}
+		else {
+			extend[k] = L;
+		}
+	}
+}
