@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <string.h>
+#define MAXN 1000005
+char s[MAXN], t[MAXN];
+int n, m;
+int nex[MAXN];
+void get_next();
+int kmp();
+int main() {
+	int num;
+	while (scanf("%d", &num) != EOF) {
+		getchar();
+		while (num--) {
+			scanf("%s", t);
+			scanf("%s", s);
+			n = strlen(s);
+			m = strlen(t);
+			get_next();
+			printf("%d\n", kmp());
+			memset(nex, 0, sizeof(nex));
+			memset(s , 0, sizeof(s));
+			memset(t , 0, sizeof(t));
+		}
+	}
+	return 0;
+} 
+
+void get_next() {
+	nex[0] = -1;
+	int j = 0,k = -1;
+	int tlen = m;
+	while (j < m) {
+		if (k == -1 || t[j] == t[k]) {
+			nex[++j] = ++k;
+		} else {
+			k = nex[k];
+		}
+	}
+}
+
+int kmp() {
+	int i = 0,j = 0;
+	int cnt = 0;
+	int slen = n;
+	int tlen = m;
+	while (i < slen && j < tlen) {
+		if (j == -1 || s[i] == t[j]) {
+			++i;
+			++j;
+		} else {
+			j = nex[j];
+		}
+		if (j == tlen) {
+			j = nex[j];
+			cnt++;
+		}
+	}
+	return cnt;
+}
