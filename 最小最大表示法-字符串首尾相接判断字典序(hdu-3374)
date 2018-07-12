@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <string>
+#include <string.h>
+#include <algorithm>
+#include <iostream>
+#define MAXN 1000005
+#define INF 0x3f3f3f3f
+using namespace std;
+int m;
+char t[MAXN], min_order[MAXN], max_order[MAXN];
+int nex[MAXN];
+void get_next();
+int get_min();
+int get_max();
+int main() {
+	while (~scanf("%s", t)) {
+		m = strlen(t);
+		int idx1 = get_min();
+		int idx2 = get_max();
+		for (int i = 0;i < m;i++) {
+			min_order[i] = t[(idx1 + i) % m];
+		}
+		min_order[m] = '\0';
+		for (int i = 0;i < m;i++) {
+			max_order[i] = t[(idx2 + i) % m];
+		}
+		max_order[m] = '\0';
+		strcpy(t, min_order);
+		get_next();
+		printf("%d %d ", idx1 + 1, m / (m - nex[m]));
+		strcpy(t, max_order);
+		get_next();
+		printf("%d %d\n", idx2 + 1, m / (m - nex[m]));
+	}
+	return 0;
+}
+
+void get_next() {
+	int j = 0, k = -1;
+	nex[0] = -1;
+	while (j < m) {
+		if (k == -1 || t[j] == t[k]) {
+			nex[++j] = ++k;
+		} else {
+			k = nex[k];
+		}
+	}
+}
+
+//最小(最大表示法) 
+//求将1字符串首尾相连后循环枚举, 寻找结果中字典序最小(最大)的字符串的首地址 
+int get_min() {
+	// i, j, k表示以i开头和以j开头的字符串的前k个字符相同 
+	int i = 0, j = 1;
+	int k = 0;
+	while (i < m && j < m && k < m) {
+		int d = t[(i + k) % m] - t[(j + k) % m];
+		if (d == 0) {
+			k++;
+		} else {
+			if (d > 0) {
+				i = i + k + 1;
+			} else {
+				j = j + k + 1;
+			}
+			k = 0;
+			if (i == j) {
+				j++;
+			}
+		}
+	}
+	return min(i, j);
+}
+
+int get_max() {
+	int i = 0, j = 1, k = 0;
+	while (i < m && j < m && k < m) {
+		int d = t[(i + k) % m] - t[(j + k) % m];
+		if (d == 0) {
+			k++;
+		} else {
+			if (d > 0) {
+				j = j + k + 1;
+			} else {
+				i = i + k + 1;
+			}
+			k = 0;
+			if (i == j) {
+				j++;
+			}
+		}
+	}	
+	return min(i, j);
+}
