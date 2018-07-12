@@ -1,0 +1,78 @@
+#include <string>
+#include <stdio.h>
+#include <string.h>
+#include <iostream>
+#include <algorithm>
+#define MAXN 200010
+#define INF 0x3f3f3f3f
+using namespace std;
+int n, idx, maxx;
+int val[MAXN];
+char str[MAXN], s[MAXN << 1];
+int p[MAXN << 1];
+void init(int len);
+void manacher();
+int main() {
+	char c;
+	while (~scanf("%c %s", &c, str)) {
+		getchar();
+		int len = strlen(str);
+		int dis = c - 'a';
+		for (int i = 0; i < len; i++) {
+			str[i] = (str[i] - 'a' + 26 - dis) % 26 + 'a';
+		}
+		init(len);
+		manacher();
+		if (maxx > 1) {
+			/*初始坐标减去回文长度/2思路有点问题,因为若为偶回文,那么恢复原长后无法标记对称点 
+			int idx1 = (idx - 2) / 2 - (p[idx] - 1) / 2;
+			printf("%d %d\n", idx1, idx1 + maxx - 1);
+			for (int i = idx1; i < idx1 + maxx; i++) {
+				printf("%c", str[i]);
+			}
+			printf("\n");
+			*/
+			//回复前+1 || -1是为了寻至边界后找到回文内的边界元素, 回复后 -1是因为坐标相对于长度要-1 
+			printf("%d %d\n", (idx - maxx + 1) / 2 - 1, (idx + maxx - 1) / 2 - 1);
+			for (int i = (idx - maxx + 1) / 2 - 1;i <= (idx + maxx - 1) / 2 - 1;i++) {
+				printf("%c", str[i]);
+			}
+			printf("\n");
+		}
+		else {
+			printf("No solution!\n");
+		}
+	}
+	return 0;
+}
+
+void init(int len) {
+	s[0] = '$';
+	s[1] = '#';
+	n = 2;
+	for (int i = 0; i < len; i++) {
+		s[n++] = str[i];
+		s[n++] = '#';
+	}
+	s[n] = '\0';
+}
+
+void manacher() {
+	int mx = 0, id = 0;
+	idx = -1, maxx = -1;
+	memset(p, 0, sizeof(p));
+	for (int i = 2; s[i]; i++) {
+		p[i] = mx > i ? min(p[2 * id - i], mx - i) : 1;
+		while (s[i - p[i]] == s[i + p[i]]) {
+			p[i]++;
+		}
+		if (i + p[i] > mx) {
+			mx = i + p[i];
+			id = i;
+		}
+		if (maxx < p[id] - 1) {
+			maxx = p[id] - 1;
+			idx = i;
+		}
+	}
+}
