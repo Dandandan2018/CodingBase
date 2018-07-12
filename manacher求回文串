@@ -1,0 +1,47 @@
+#include <string>
+#include <stdio.h>
+#include <string.h>
+#include <iostream>
+#include <algorithm>
+#define MAXN 1000010
+#define INF 0x3f3f3f3f
+using namespace std;
+int n;
+char str[MAXN], s[MAXN << 1];
+int p[MAXN << 1];
+int manacher();
+int main() {
+	int run = 1;
+	while (~scanf("%s", str) && strcmp(str, "END") != 0) {
+		int len = strlen(str);
+		s[0] = '$', s[1] = '#';
+		int n = 2;
+		for (int i = 0;i < len;i++) {
+			s[n++] = str[i];
+			s[n++] = '#';
+		}
+		s[n] = '\0';
+		int res = manacher();
+		printf("Case %d: %d\n", run++, res);
+	}
+	return 0;
+}
+
+//T: http://www.felix021.com/blog/read.php?2040
+int manacher() {
+	//mx当前最长回文串所能到达的右端点, id当前最长回文串的下标, p[i] - 1最长回文串长度 
+	int mx = 0, id = 0, maxn = 0;
+	memset(p, 0, sizeof(p));
+	for (int i = 1;s[i];i++) {
+		p[i] = mx > i ? min(p[2 * id - i], mx - i) : 1;
+		while (s[i - p[i]] == s[i + p[i]]) {
+			p[i]++;
+		}
+		if (i + p[i] > mx) {
+			mx = i + p[i];	//最远右边界为i位置 + 周围对称字符距离 
+			id = i;
+		}
+		maxn = max(maxn, p[i]);
+	}
+	return maxn - 1;
+}
